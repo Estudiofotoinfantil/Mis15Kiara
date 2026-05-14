@@ -811,6 +811,35 @@
     <span class="branding-sub">Invitaciones digitales premium · Instagram</span>
   </div>
 
+<!-- ══ AUDIO ══ -->
+<audio id="bg-music" loop preload="auto">
+  <source src="https://raw.githubusercontent.com/Estudiofotoinfantil/Mis15Kiara/main/Ed%20Sheeran%20-%20Photograph%20(Official%20Music%20Video)%20-%20(64%20Kbps).mp3" type="audio/mpeg">
+</audio>
+
+<!-- ══ MUTE BUTTON ══ -->
+<button id="mute-btn" onclick="toggleMute()" aria-label="Mutear música" style="
+  display:none;
+  position:fixed;
+  bottom:22px;
+  right:18px;
+  z-index:999;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:1px solid rgba(200,205,216,0.35);
+  background:rgba(5,5,8,0.82);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  cursor:pointer;
+  font-size:19.8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 2px 16px rgba(0,0,0,0.5);
+  transition:border-color 0.3s, transform 0.15s;
+  -webkit-tap-highlight-color:transparent;
+">🔊</button>
+
 </div>
 </div>
 
@@ -907,12 +936,25 @@ function initGlitter(canvasId,density,bokehCount,sz){
 function openInvitation(){
   var intro=document.getElementById('intro');
   intro.style.opacity='0';
+  /* Arrancar música en el mismo gesto del usuario */
+  var music=document.getElementById('bg-music');
+  music.volume=0.5;
+  music.play().catch(function(){});
+  document.getElementById('mute-btn').style.display='flex';
   setTimeout(function(){
     intro.style.display='none';
     document.getElementById('main').classList.add('visible');
     initGlitter('glitter-bg',180,22,1.2);
     initReveal(); initCountdown(); initMap();
   },1200);
+}
+
+/* ══ MUTE ══ */
+function toggleMute(){
+  var music=document.getElementById('bg-music');
+  var btn=document.getElementById('mute-btn');
+  music.muted=!music.muted;
+  btn.textContent=music.muted?'🔇':'🔊';
 }
 
 initGlitter('intro-canvas',220,30,1.4);
