@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kiara · XV Años ✨</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  :root {
+    --black:    #000000;
+    --dark:     #050508;
+    --dark2:    #0A0A0F;
+    --white:    #FFFFFF;
+    --silver:   #C8CDD8;
+    --silver2:  #E8ECF5;
+    --gold:     #C9A96E;
+    --gold2:    #E8CC90;
+    --text:     rgba(255,255,255,0.92);
+    --text-mid: rgba(200,205,216,0.65);
+    --text-soft:rgba(200,205,216,0.35);
+    --glow:     rgba(200,205,216,0.15);
+  }
+
+- { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { scroll-behavior:smooth; }
+
+html {
+background: #000;
+}
+
+body {
+background: var(–black);
+font-family: ‘Montserrat’, sans-serif;
+color: var(–text);
+overflow-x: hidden;
+max-width: 430px;
+margin: 0 auto;
+position: relative;
+}
+
+/* ══════════════════════════════════
+GLITTER CANVAS — full page fixed
+══════════════════════════════════ */
+#glitter-bg {
+position: fixed; top:0;
+left: 50%; transform: translateX(-50%);
+width: 100%; max-width: 430px;
+height:100%;
+pointer-events:none;
+z-index: 0;
+}
+
+/* All content sits above canvas */
+#page-wrap { position:relative; z-index:1; }
+
+/* ══════════════════════════════════
+INTRO SCREEN
+══════════════════════════════════ */
+#intro {
+position: fixed;
+top: 0;
+left: 50%;
+transform: translateX(-50%);
+width: 100%;
+max-width: 430px;
+height: 100%;
+background: #000;
+z-index: 1000;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 2rem;
+overflow: hidden;
+transition: opacity 1.2s ease;
+}
+
+#intro-canvas {
+position: absolute; inset:0;
+width:100%; height:100%;
+pointer-events:none;
+}
+
+.intro-content {
+position: relative; z-index: 2;
+display:flex; flex-direction:column;
+align-items:center; text-align:center;
+}
+
+.intro-xv {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 90px; font-weight: 700;
+color: transparent;
+background: linear-gradient(160deg, #fff 0%, #C8CDD8 40%, #9AA0B0 100%);
+-webkit-background-clip: text; background-clip: text;
+line-height: 0.85;
+animation: fadeUp 1s ease 0.4s both;
+letter-spacing: -2px;
+text-shadow: none;
+filter: drop-shadow(0 0 30px rgba(200,205,216,0.3));
+}
+
+.intro-script {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 12px; font-style: italic; font-weight: 300;
+color: var(–text-mid);
+letter-spacing: 6px; text-transform: uppercase;
+animation: fadeUp 1s ease 0.6s both;
+margin-top: 0.25rem;
+}
+
+.intro-name {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 72px; font-weight: 600;
+color: var(–white);
+letter-spacing: 4px;
+animation: fadeUp 1s ease 0.8s both;
+margin-top: 0.5rem;
+filter: drop-shadow(0 0 40px rgba(255,255,255,0.2));
+}
+
+.intro-line {
+width: 120px; height: 1px;
+background: linear-gradient(90deg, transparent, var(–silver), transparent);
+margin: 1.5rem auto;
+animation: fadeUp 1s ease 1s both;
+}
+
+.intro-sub {
+font-size: 9px; letter-spacing: 4px;
+text-transform: uppercase; color: var(–text-soft);
+font-weight: 300;
+animation: fadeUp 1s ease 1.2s both;
+line-height: 1.9;
+}
+
+.intro-btn {
+margin-top: 2.5rem;
+background: transparent;
+border: 1px solid rgba(200,205,216,0.4);
+color: var(–silver2);
+border-radius: 2px;
+padding: 16px 52px;
+font-family: ‘Montserrat’, sans-serif;
+font-size: 9px; font-weight: 600;
+letter-spacing: 4px; text-transform: uppercase;
+cursor: pointer;
+animation: fadeUp 1s ease 1.4s both;
+box-shadow: 0 0 30px rgba(200,205,216,0.08),
+inset 0 0 30px rgba(200,205,216,0.04);
+transition: all 0.3s;
+}
+.intro-btn:hover {
+background: rgba(200,205,216,0.1);
+box-shadow: 0 0 50px rgba(200,205,216,0.15);
+border-color: rgba(200,205,216,0.7);
+}
+.intro-btn:active { transform: scale(0.96); }
+
+/* ══════════════════════════════════
+MAIN
+══════════════════════════════════ */
+#main { opacity:0; transition:opacity 1.2s ease; }
+#main.visible { opacity:1; }
+
+/* ══════════════════════════════════
+HERO
+══════════════════════════════════ */
+.hero {
+min-height: 100svh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 4rem 1.5rem 3rem;
+text-align: center;
+position: relative;
+}
+
+/* Bokeh glow behind name */
+.hero-glow {
+position: absolute; top:50%; left:50%;
+transform: translate(-50%,-50%);
+width: 300px; height: 300px;
+background: radial-gradient(circle, rgba(200,205,216,0.06) 0%, transparent 70%);
+border-radius: 50%;
+pointer-events: none;
+animation: glowPulse 4s ease-in-out infinite;
+}
+
+.hero-eyebrow {
+font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+color: var(–text-soft); font-weight: 400;
+margin-bottom: 1rem;
+animation: fadeUp 1s ease 0.2s both;
+}
+
+/* Photo frame */
+.hero-photo {
+width: 170px; height: 170px; border-radius: 50%;
+border: 1px solid rgba(200,205,216,0.3);
+box-shadow:
+0 0 0 6px rgba(200,205,216,0.05),
+0 0 60px rgba(200,205,216,0.12),
+0 0 120px rgba(200,205,216,0.06);
+overflow: hidden;
+margin: 0 auto 2rem;
+position: relative;
+background: #111;
+animation: fadeUp 1s ease 0.3s both;
+}
+.hero-photo img { width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(0.2); }
+.hero-photo-placeholder {
+width:100%; height:100%;
+display:flex; align-items:center; justify-content:center;
+font-size: 60px;
+background: radial-gradient(circle at 40% 35%, #2A2A35, #0A0A0F);
+}
+
+/* Ring around photo */
+.hero-photo-ring {
+position: absolute; top:-12px; left:-12px; right:-12px; bottom:-12px;
+border-radius: 50%;
+border: 1px solid rgba(200,205,216,0.15);
+animation: slowRotate 30s linear infinite;
+pointer-events: none;
+}
+.hero-photo-ring::before {
+content: ‘✦’; position:absolute; top:-7px; left:50%;
+transform: translateX(-50%);
+color: var(–silver); font-size: 10px;
+filter: drop-shadow(0 0 6px rgba(200,205,216,0.8));
+}
+
+.hero-xv {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 110px; font-weight: 700;
+color: transparent;
+background: linear-gradient(160deg, #fff 0%, #C8CDD8 50%, #8A96A8 100%);
+-webkit-background-clip: text; background-clip: text;
+line-height: 0.85;
+filter: drop-shadow(0 0 30px rgba(200,205,216,0.25));
+animation: fadeUp 1s ease 0.4s both;
+}
+
+.hero-name {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 52px; font-weight: 300; font-style: italic;
+color: var(–white);
+animation: fadeUp 1s ease 0.6s both;
+margin-top: 0.2rem;
+letter-spacing: 2px;
+}
+
+.hero-tagline {
+font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+color: var(–text-soft); font-weight: 300;
+margin-top: 1.5rem;
+animation: fadeUp 1s ease 0.8s both;
+line-height: 1.9;
+}
+
+.hero-date {
+margin-top: 1.5rem;
+display: inline-block;
+border: 1px solid rgba(200,205,216,0.2);
+border-radius: 2px;
+padding: 10px 28px;
+font-size: 10px; letter-spacing: 3px;
+color: var(–text-mid);
+animation: fadeUp 1s ease 1s both;
+background: rgba(200,205,216,0.04);
+}
+
+.hero-scroll {
+position: absolute; bottom: 1.5rem; left: 50%;
+transform: translateX(-50%);
+display: flex; flex-direction: column; align-items: center; gap: 6px;
+cursor: pointer; animation: bounce 2s ease infinite 2s;
+}
+.hero-scroll span { font-size: 7px; letter-spacing: 4px; color: var(–text-soft); text-transform: uppercase; }
+.hero-scroll-arr {
+width: 16px; height: 16px;
+border-right: 1px solid rgba(200,205,216,0.3);
+border-bottom: 1px solid rgba(200,205,216,0.3);
+transform: rotate(45deg);
+}
+
+/* ══════════════════════════════════
+COUNTDOWN — Bokeh strip style
+══════════════════════════════════ */
+.cd-section {
+padding: 0;
+position: relative;
+}
+
+.cd-bokeh-strip {
+position: relative;
+padding: 3rem 1.5rem;
+overflow: hidden;
+background: linear-gradient(135deg, #0A0A10, #050508);
+border-top: 1px solid rgba(200,205,216,0.08);
+border-bottom: 1px solid rgba(200,205,216,0.08);
+}
+
+/* bokeh circles behind countdown */
+.bokeh-layer {
+position: absolute; inset: 0;
+pointer-events: none; overflow: hidden;
+}
+.bk {
+position: absolute; border-radius: 50%;
+background: radial-gradient(circle, rgba(200,205,216,0.18) 0%, transparent 70%);
+animation: bokehFloat var(–d,8s) ease-in-out infinite var(–dl,0s);
+filter: blur(2px);
+}
+
+.cd-label-top {
+font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+color: var(–text-soft); font-weight: 300;
+text-align: center; margin-bottom: 0.5rem;
+}
+
+.cd-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 13px; font-style: italic;
+color: var(–text-mid); text-align: center;
+margin-bottom: 2rem; letter-spacing: 1px;
+}
+
+.cd-grid {
+display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;
+position: relative; z-index: 2;
+}
+
+.cd-item { text-align: center; }
+
+.cd-num-wrap {
+position: relative;
+background: rgba(255,255,255,0.03);
+border: 1px solid rgba(200,205,216,0.12);
+border-radius: 3px; padding: 1.2rem 0.4rem 1rem;
+margin-bottom: 0.5rem;
+}
+.cd-num-wrap::before {
+content: ‘’;
+position: absolute; top: 0; left: 20%; right: 20%; height: 1px;
+background: linear-gradient(90deg,transparent,rgba(200,205,216,0.4),transparent);
+}
+
+.cd-num {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 44px; font-weight: 700;
+color: var(–white); line-height: 1; display: block;
+text-shadow: 0 0 20px rgba(200,205,216,0.4);
+}
+
+.cd-lbl {
+font-size: 7px; letter-spacing: 3px;
+text-transform: uppercase; color: var(–text-soft);
+font-weight: 500;
+}
+
+/* ══════════════════════════════════
+SECTION BASE
+══════════════════════════════════ */
+.section {
+padding: 3.5rem 1.5rem;
+position: relative;
+}
+
+.s-eyebrow {
+font-size: 8px; letter-spacing: 5px; text-transform: uppercase;
+color: var(–text-soft); font-weight: 400; margin-bottom: 0.5rem;
+}
+
+.s-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 36px; font-weight: 600;
+color: var(–white); line-height: 1.05;
+}
+
+.s-div {
+display: flex; align-items: center; gap: 14px; margin: 1.75rem 0;
+}
+.s-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(200,205,216,0.2)); }
+.s-line.r { background:linear-gradient(270deg,transparent,rgba(200,205,216,0.2)); }
+.s-star { font-size:12px; color:var(–silver); opacity:0.5; }
+
+/* ══════════════════════════════════
+GALLERY
+══════════════════════════════════ */
+.gal-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+grid-template-rows: 220px 160px;
+gap: 4px;
+}
+
+.gal-item {
+position: relative; overflow: hidden; cursor: pointer;
+background: #0D0D12;
+border: 1px solid rgba(200,205,216,0.08);
+transition: border-color 0.3s;
+}
+.gal-item:first-child { grid-column: 1/-1; }
+.gal-item:hover { border-color: rgba(200,205,216,0.25); }
+.gal-item:active { opacity:0.9; }
+
+.gal-item img {
+width:100%; height:100%;
+object-fit:cover; display:block;
+filter: grayscale(0.3) brightness(0.9);
+transition: transform 0.5s, filter 0.3s;
+}
+.gal-item:hover img { transform:scale(1.04); filter:grayscale(0) brightness(1); }
+
+.gal-shimmer {
+position: absolute; inset:0;
+background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+pointer-events: none;
+}
+
+.gal-lbl {
+position: absolute; bottom:10px; left:50%;
+transform: translateX(-50%);
+font-size: 7px; letter-spacing: 3px; text-transform: uppercase;
+color: rgba(200,205,216,0.6); white-space: nowrap;
+}
+
+/* ── LIGHTBOX ── */
+#lightbox {
+display:none; position:fixed; inset:0;
+background:rgba(0,0,0,0.97);
+z-index:800;
+align-items:center; justify-content:center; padding:1rem;
+flex-direction:column; gap:1rem;
+}
+#lightbox.open { display:flex; }
+#lb-img { max-width:100%; max-height:85svh; border:1px solid rgba(200,205,216,0.15); }
+#lb-cap { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(–text-soft); }
+#lb-close {
+position:absolute; top:14px; right:14px;
+width:38px;height:38px;
+background:rgba(200,205,216,0.1); border:1px solid rgba(200,205,216,0.2);
+border-radius:50%; color:var(–silver); font-size:16px;
+cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+
+/* ══════════════════════════════════
+DRESSCODE
+══════════════════════════════════ */
+.dc-card {
+background: rgba(255,255,255,0.02);
+border: 1px solid rgba(200,205,216,0.12);
+padding: 2rem 1.5rem; text-align: center;
+position: relative; overflow: hidden;
+}
+.dc-card::before {
+content:’’; position:absolute; top:0; left:0; right:0; height:1px;
+background: linear-gradient(90deg,transparent,rgba(200,205,216,0.3),transparent);
+}
+.dc-card::after {
+content:’’; position:absolute; bottom:0; left:0; right:0; height:1px;
+background: linear-gradient(90deg,transparent,rgba(200,205,216,0.3),transparent);
+}
+
+.dc-icon-wrap {
+width: 60px; height: 60px; margin: 0 auto 1.25rem;
+border: 1px solid rgba(200,205,216,0.2);
+border-radius: 50%;
+display:flex; align-items:center; justify-content:center;
+font-size: 24px;
+background: rgba(200,205,216,0.05);
+box-shadow: 0 0 30px rgba(200,205,216,0.1);
+}
+
+.dc-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 28px; font-weight: 600;
+color: var(–white); letter-spacing: 3px;
+margin-bottom: 0.75rem;
+text-transform: uppercase;
+}
+
+.dc-subtitle {
+font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+color: var(–silver); margin-bottom: 1rem; font-weight: 300;
+}
+
+.dc-desc {
+font-size: 12px; font-weight: 300;
+color: var(–text-mid); line-height: 1.9;
+}
+
+.dc-tags {
+display: flex; flex-wrap: wrap; justify-content: center;
+gap: 8px; margin-top: 1.5rem;
+}
+
+.dc-tag {
+border: 1px solid rgba(200,205,216,0.2);
+padding: 5px 16px;
+font-size: 8px; letter-spacing: 3px; text-transform: uppercase;
+color: var(–text-mid); font-weight: 400;
+background: rgba(200,205,216,0.04);
+}
+
+/* ══════════════════════════════════
+DETAILS
+══════════════════════════════════ */
+.det-card {
+display:flex; align-items:center; gap:1.25rem;
+padding:1.25rem 0;
+border-bottom: 1px solid rgba(200,205,216,0.07);
+transition: background 0.2s;
+}
+.det-card:last-child { border-bottom:none; }
+
+.det-num {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 36px; font-weight: 300;
+color: rgba(200,205,216,0.2);
+flex-shrink: 0; width: 40px; text-align: center; line-height: 1;
+}
+
+.det-icon-sm { font-size: 18px; flex-shrink:0; opacity:0.7; }
+
+.det-info { flex:1; }
+.det-lbl { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(–text-soft); font-weight:500; margin-bottom:4px; }
+.det-val { font-size:14px; font-weight:400; color:var(–text); line-height:1.3; }
+.det-sub { font-size:11px; font-weight:300; color:var(–text-mid); margin-top:2px; }
+
+/* ══════════════════════════════════
+MAP
+══════════════════════════════════ */
+.map-wrap {
+border: 1px solid rgba(200,205,216,0.12);
+overflow: hidden;
+}
+
+#map { width:100%; height:240px; filter:grayscale(1) invert(0.9) brightness(0.6) contrast(1.2); }
+
+.map-body {
+padding: 1.25rem;
+background: rgba(255,255,255,0.02);
+border-top: 1px solid rgba(200,205,216,0.08);
+}
+
+.map-name { font-family:‘Cormorant Garamond’,serif; font-size:20px; font-weight:600; color:var(–white); }
+.map-addr { font-size:11px; font-weight:300; color:var(–text-mid); line-height:1.6; margin-top:3px; }
+
+.btn-gps {
+display:flex; align-items:center; justify-content:center; gap:10px;
+width:100%; background:transparent;
+border: 1px solid rgba(200,205,216,0.25);
+color:var(–silver2); padding:14px; margin-top:1rem;
+font-family:‘Montserrat’,sans-serif; font-size:9px; font-weight:600;
+letter-spacing:4px; text-transform:uppercase; cursor:pointer;
+box-shadow:0 0 30px rgba(200,205,216,0.05);
+transition:all 0.3s;
+}
+.btn-gps:hover { background:rgba(200,205,216,0.08); border-color:rgba(200,205,216,0.5); }
+.btn-gps:active { transform:scale(0.98); }
+
+/* ══════════════════════════════════
+CONFIRMATION
+══════════════════════════════════ */
+.cf-title-block {
+text-align: center; padding: 3rem 1.5rem 0;
+}
+
+.cf-label {
+font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
+color: var(–text-soft); font-weight: 300; margin-bottom: 0.75rem;
+display: block;
+}
+
+.cf-main-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 32px; font-weight: 600;
+color: var(–white); margin-bottom: 0.75rem;
+}
+
+.cf-sub {
+font-size: 12px; font-weight: 300;
+color: var(–text-mid); line-height: 1.8;
+}
+
+.cf-wrap {
+margin: 2rem 1.5rem;
+background: rgba(255,255,255,0.02);
+border: 1px solid rgba(200,205,216,0.1);
+padding: 2rem 1.5rem;
+position: relative;
+}
+.cf-wrap::before {
+content:’’; position:absolute; top:0; left:0; right:0; height:1px;
+background:linear-gradient(90deg,transparent,rgba(200,205,216,0.3),transparent);
+}
+
+.f-group { margin-bottom: 16px; }
+.f-label { display:block; font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(–text-soft); font-weight:500; margin-bottom:8px; }
+
+.f-input {
+width:100%; background:rgba(255,255,255,0.03);
+border:1px solid rgba(200,205,216,0.15);
+padding:13px 14px; font-family:‘Montserrat’,sans-serif;
+font-size:13px; color:var(–white); outline:none;
+transition:border-color 0.2s; appearance:none;
+}
+.f-input:focus { border-color:rgba(200,205,216,0.4); }
+.f-input::placeholder { color:var(–text-soft); }
+
+.ctr-group { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+.ctr-wrap {
+background:rgba(255,255,255,0.02);
+border:1px solid rgba(200,205,216,0.12); padding:12px 14px;
+}
+
+.ctr-lbl { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(–text-soft); font-weight:500; display:block; margin-bottom:8px; }
+
+.ctr-row { display:flex; align-items:center; justify-content:space-between; }
+
+.ctr-btn {
+width:30px; height:30px; border:1px solid rgba(200,205,216,0.25);
+background:transparent; color:var(–silver);
+font-size:18px; font-weight:200;
+cursor:pointer; display:flex; align-items:center; justify-content:center;
+transition:background 0.2s;
+}
+.ctr-btn:active { background:rgba(200,205,216,0.12); }
+
+.ctr-val {
+font-family:‘Cormorant Garamond’,serif; font-size:28px; color:var(–white);
+min-width:30px; text-align:center;
+}
+
+.btn-confirm {
+width:100%; background:transparent;
+border:1px solid rgba(200,205,216,0.3);
+color:var(–silver2); padding:16px; margin-top:0.5rem;
+font-family:‘Montserrat’,sans-serif; font-size:9px; font-weight:600;
+letter-spacing:4px; text-transform:uppercase; cursor:pointer;
+display:flex; align-items:center; justify-content:center; gap:10px;
+box-shadow:0 0 30px rgba(200,205,216,0.06);
+transition:all 0.3s;
+}
+.btn-confirm:hover { background:rgba(200,205,216,0.1); border-color:rgba(200,205,216,0.6); box-shadow:0 0 50px rgba(200,205,216,0.12); }
+.btn-confirm:active { transform:scale(0.98); }
+
+.cf-ok { display:none; text-align:center; padding:2rem 1rem; }
+.cf-ok.show { display:block; }
+.cf-ok-icon { font-size:48px; margin-bottom:1rem; display:block; filter:drop-shadow(0 0 20px rgba(200,205,216,0.5)); }
+.cf-ok-msg { font-family:‘Cormorant Garamond’,serif; font-size:24px; font-style:italic; color:var(–white); }
+.cf-ok-sub { font-size:11px; color:var(–text-mid); margin-top:0.75rem; font-weight:300; line-height:1.7; letter-spacing:0.5px; }
+
+/* ══════════════════════════════════
+GIFT SECTION
+══════════════════════════════════ */
+.gift-card {
+background: rgba(255,255,255,0.02);
+border: 1px solid rgba(200,205,216,0.12);
+padding: 2.25rem 1.5rem;
+text-align: center;
+position: relative;
+overflow: hidden;
+}
+.gift-card::before {
+content:’’; position:absolute; top:0; left:0; right:0; height:1px;
+background: linear-gradient(90deg,transparent,rgba(200,205,216,0.3),transparent);
+}
+.gift-card::after {
+content:’’; position:absolute; bottom:0; left:0; right:0; height:1px;
+background: linear-gradient(90deg,transparent,rgba(200,205,216,0.3),transparent);
+}
+
+.gift-icon-wrap {
+width: 64px; height: 64px; margin: 0 auto 1.5rem;
+border: 1px solid rgba(200,205,216,0.2);
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 26px;
+background: rgba(200,205,216,0.05);
+box-shadow: 0 0 30px rgba(200,205,216,0.08);
+}
+
+.gift-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 28px; font-weight: 600;
+color: var(–white); letter-spacing: 2px;
+margin-bottom: 0.5rem;
+}
+
+.gift-subtitle {
+font-size: 8px; letter-spacing: 5px; text-transform: uppercase;
+color: var(–silver); margin-bottom: 1.5rem; font-weight: 300;
+}
+
+.gift-divider {
+display: flex; align-items: center; gap: 14px; margin: 0 auto 1.5rem;
+max-width: 200px;
+}
+.gift-divider-line { flex:1; height:1px; background: rgba(200,205,216,0.15); }
+.gift-divider-star { font-size: 10px; color: var(–silver); opacity: 0.4; }
+
+.gift-desc {
+font-size: 13px; font-weight: 300;
+color: var(–text-mid); line-height: 2;
+margin-bottom: 1.75rem;
+}
+
+.gift-highlight {
+display: inline-flex; align-items: center; gap: 10px;
+border: 1px solid rgba(200,205,216,0.18);
+background: rgba(200,205,216,0.04);
+padding: 14px 22px;
+font-size: 11px; letter-spacing: 1.5px;
+color: var(–silver2); font-weight: 300;
+line-height: 1.7;
+}
+
+.gift-note {
+font-size: 10px; color: var(–text-soft);
+margin-top: 1.25rem; letter-spacing: 0.5px;
+font-weight: 300; font-style: italic;
+line-height: 1.7;
+}
+
+/* ══════════════════════════════════
+FOOTER
+══════════════════════════════════ */
+.footer {
+padding: 4rem 2rem 3.5rem; text-align: center;
+border-top: 1px solid rgba(200,205,216,0.08);
+position: relative;
+}
+
+.ft-ornament {
+font-size: 13px; color: var(–silver); opacity: 0.3;
+letter-spacing: 16px; display: block; margin-bottom: 2rem;
+}
+
+.ft-quote {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 19px; font-style: italic; font-weight: 300;
+color: rgba(255,255,255,0.8);
+line-height: 1.85; margin-bottom: 2.5rem;
+position: relative; padding: 0 0.5rem;
+}
+.ft-quote::before {
+content: ‘”’; position:absolute; top:-30px; left:-5px;
+font-size:80px; color:rgba(200,205,216,0.1);
+line-height:1; font-style:normal;
+}
+
+.ft-name {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 42px; font-weight: 600;
+color: transparent;
+background: linear-gradient(160deg,#fff,#C8CDD8,#8A96A8);
+-webkit-background-clip: text; background-clip: text;
+letter-spacing: 6px;
+filter: drop-shadow(0 0 20px rgba(200,205,216,0.2));
+}
+
+.ft-div { width:60px; height:1px; background:rgba(200,205,216,0.2); margin:1.5rem auto; }
+
+.ft-brand { font-size:8px; letter-spacing:4px; text-transform:uppercase; color:var(–text-soft); }
+
+.ft-stars { font-size:10px; color:var(–silver); opacity:0.25; letter-spacing:14px; margin-top:2rem; display:block; }
+
+/* ══════════════════════════════════
+KEYFRAMES
+══════════════════════════════════ */
+@keyframes fadeUp {
+from { opacity:0; transform:translateY(24px); }
+to   { opacity:1; transform:translateY(0); }
+}
+@keyframes glowPulse {
+0%,100% { opacity:0.5; transform:translate(-50%,-50%) scale(1); }
+50%      { opacity:1;   transform:translate(-50%,-50%) scale(1.15); }
+}
+@keyframes bokehFloat {
+0%,100% { transform:translate(0,0) scale(1); }
+33%      { transform:translate(var(–tx,20px),var(–ty,-15px)) scale(1.1); }
+66%      { transform:translate(var(–tx2,-10px),var(–ty2,20px)) scale(0.9); }
+}
+@keyframes slowRotate {
+from { transform:rotate(0deg); }
+to   { transform:rotate(360deg); }
+}
+@keyframes bounce {
+0%,100% { transform:translateX(-50%) translateY(0); }
+50%      { transform:translateX(-50%) translateY(8px); }
+}
+
+.reveal {
+opacity:0; transform:translateY(32px);
+transition:opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible { opacity:1; transform:translateY(0); }
+/* ══════════════════════════════════
+MUSIC BUTTON
+══════════════════════════════════ */
+#music-btn {
+position: fixed;
+bottom: 28px;
+right: max(20px, calc(50% - 195px));
+z-index: 500;
+width: 44px; height: 44px;
+border-radius: 50%;
+background: rgba(10,10,15,0.85);
+border: 1px solid rgba(200,205,216,0.25);
+backdrop-filter: blur(10px);
+display: none;
+align-items: center; justify-content: center;
+cursor: pointer;
+font-size: 18px;
+box-shadow: 0 0 20px rgba(200,205,216,0.1);
+transition: border-color 0.3s, box-shadow 0.3s;
+animation: fadeUp 0.8s ease both;
+}
+#music-btn:hover {
+border-color: rgba(200,205,216,0.5);
+box-shadow: 0 0 30px rgba(200,205,216,0.2);
+}
+#music-btn.active { border-color: rgba(200,205,216,0.4); }
+
+/* ══════════════════════════════════
+PROMO BRAND
+══════════════════════════════════ */
+.promo-brand {
+text-align: center;
+padding: 1.5rem 1rem 2rem;
+border-top: 1px solid rgba(200,205,216,0.05);
+}
+.promo-brand-label {
+font-size: 7px; letter-spacing: 4px; text-transform: uppercase;
+color: rgba(200,205,216,0.2); font-weight: 300;
+display: block; margin-bottom: 0.6rem;
+}
+.promo-brand-link {
+display: inline-flex; align-items: center; gap: 7px;
+text-decoration: none;
+color: rgba(200,205,216,0.35);
+font-size: 11px; font-weight: 300;
+letter-spacing: 1.5px;
+transition: color 0.3s;
+}
+.promo-brand-link:hover { color: rgba(200,205,216,0.65); }
+.promo-brand-link svg {
+width: 13px; height: 13px; opacity: 0.6;
+flex-shrink: 0;
+}
+</style>
+
+</head>
+<body>
+
+<!-- MUSIC PLAYER -->
+
+<iframe id="yt-player"
+  src=""
+  style="display:none;width:0;height:0;border:0;"
+  allow="autoplay"
+  title="music">
+</iframe>
+<button id="music-btn" onclick="toggleMusic()" aria-label="Música">🎵</button>
+
+<!-- GLOBAL GLITTER CANVAS -->
+
+<canvas id="glitter-bg"></canvas>
+
+<!-- ═══════════════ INTRO ═══════════════ -->
+
+<div id="intro" role="dialog" aria-label="Invitación XV Años Kiara">
+  <canvas id="intro-canvas"></canvas>
+  <div class="intro-content">
+    <div class="intro-xv">XV</div>
+    <p class="intro-script">· años ·</p>
+    <h1 class="intro-name">Kiara</h1>
+    <div class="intro-line"></div>
+    <p class="intro-sub">Una noche única<br>que el tiempo no borrará</p>
+    <button class="intro-btn" onclick="openInvitation()">Abrir Invitación</button>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE WRAP ═══════════════ -->
+
+<div id="page-wrap">
+<div id="main">
+
+  <!-- HERO -->
+
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <p class="hero-eyebrow">✦ &nbsp; Una invitación especial &nbsp; ✦</p>
+
+```
+<div class="hero-xv">XV</div>
+<h2 class="hero-name">Kiara</h2>
+<p class="hero-tagline">Quince años de luz · una noche para siempre</p>
+<div class="hero-date">1 DE AGOSTO · 2026 · 21:00 HS</div>
+
+<div class="hero-scroll" onclick="document.getElementById('cd-section').scrollIntoView({behavior:'smooth'})">
+  <span>scroll</span>
+  <div class="hero-scroll-arr"></div>
+</div>
+```
+
+  </section>
+
+  <!-- COUNTDOWN — Bokeh Strip -->
+
+  <div class="cd-section" id="cd-section">
+    <div class="cd-bokeh-strip">
+      <div class="bokeh-layer">
+        <div class="bk" style="width:120px;height:120px;top:10%;left:-20px;--d:9s;--dl:0s;--tx:30px;--ty:-20px;--tx2:-15px;--ty2:25px;"></div>
+        <div class="bk" style="width:80px;height:80px;top:20%;right:10px;--d:11s;--dl:1.5s;--tx:-20px;--ty:30px;--tx2:25px;--ty2:-15px;"></div>
+        <div class="bk" style="width:150px;height:150px;top:40%;left:20%;--d:13s;--dl:0.5s;--tx:25px;--ty:-35px;--tx2:-30px;--ty2:20px;"></div>
+        <div class="bk" style="width:100px;height:100px;bottom:10%;right:5%;--d:10s;--dl:2s;--tx:-25px;--ty:20px;--tx2:20px;--ty2:-25px;"></div>
+        <div class="bk" style="width:60px;height:60px;top:5%;left:50%;--d:8s;--dl:3s;--tx:15px;--ty:25px;--tx2:-20px;--ty2:-10px;"></div>
+      </div>
+
+```
+  <p class="cd-label-top">FALTA :</p>
+  <p class="cd-title">1 de Agosto · 2026 · 21:00 hs</p>
+
+  <div class="cd-grid" id="cd-grid">
+    <div class="cd-item">
+      <div class="cd-num-wrap"><span class="cd-num" id="cd-d">--</span></div>
+      <span class="cd-lbl">Días</span>
+    </div>
+    <div class="cd-item">
+      <div class="cd-num-wrap"><span class="cd-num" id="cd-h">--</span></div>
+      <span class="cd-lbl">Hs</span>
+    </div>
+    <div class="cd-item">
+      <div class="cd-num-wrap"><span class="cd-num" id="cd-m">--</span></div>
+      <span class="cd-lbl">Min</span>
+    </div>
+    <div class="cd-item">
+      <div class="cd-num-wrap"><span class="cd-num" id="cd-s">--</span></div>
+      <span class="cd-lbl">Seg</span>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- GALLERY -->
+
+  <section class="section">
+    <div class="reveal">
+      <p class="s-eyebrow">✦ galería</p>
+      <h2 class="s-title">Momentos de Kiara</h2>
+    </div>
+    <div class="s-div reveal" style="transition-delay:.1s">
+      <div class="s-line"></div><span class="s-star">✦</span><div class="s-line r"></div>
+    </div>
+
+```
+<!-- Foto 1 — ancho completo -->
+<div class="reveal" style="transition-delay:.15s">
+  <div class="gal-item" style="height:320px;margin-bottom:4px;" onclick="openLB('https://i.ibb.co/Pv8HTMfX/Gal1.jpg','Kiara ✦')">
+    <img src="https://i.ibb.co/Pv8HTMfX/Gal1.jpg" alt="Kiara" loading="eager" style="object-position:center top;">
+    <div class="gal-shimmer"></div>
+  </div>
+</div>
+
+<!-- Fotos 2 y 3 — lado a lado -->
+<div class="reveal" style="transition-delay:.25s;display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+  <div class="gal-item" style="height:220px;" onclick="openLB('https://i.ibb.co/0yBLspfJ/Gal2.jpg','Kiara ✦')">
+    <img src="https://i.ibb.co/0yBLspfJ/Gal2.jpg" alt="Kiara" loading="lazy" style="object-position:center top;">
+    <div class="gal-shimmer"></div>
+  </div>
+  <div class="gal-item" style="height:220px;" onclick="openLB('https://i.ibb.co/5W8XShc1/Gal3.jpg','Kiara ✦')">
+    <img src="https://i.ibb.co/5W8XShc1/Gal3.jpg" alt="Kiara" loading="lazy" style="object-position:center top;">
+    <div class="gal-shimmer"></div>
+  </div>
+</div>
+```
+
+  </section>
+
+  <!-- LIGHTBOX -->
+
+  <div id="lightbox" role="dialog" aria-modal="true" onclick="closeLB()">
+    <button id="lb-close" aria-label="Cerrar">✕</button>
+    <img id="lb-img" src="" alt="">
+    <span id="lb-cap"></span>
+  </div>
+
+  <!-- DRESSCODE -->
+
+  <section class="section" style="padding-top:0">
+    <div class="reveal">
+      <p class="s-eyebrow">✦ indumentaria</p>
+    </div>
+    <div class="dc-card reveal" style="transition-delay:.1s">
+      <div class="dc-icon-wrap">👗</div>
+      <div class="dc-title">Dress Code</div>
+      <div class="dc-subtitle">Elegante</div>
+      <p class="dc-desc">
+        Esta noche merece tu mejor versión.<br>
+        Vestimenta formal o semi-formal.<br>
+        Tonos oscuros, neutros o plateados son bienvenidos.
+      </p>
+      <div class="dc-tags">
+        <span class="dc-tag">Formal</span>
+        <span class="dc-tag">Semi-formal</span>
+        <span class="dc-tag">Negro</span>
+        <span class="dc-tag">Plateado</span>
+        <span class="dc-tag">Neutros</span>
+        <span class="dc-tag">Gala</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- DETAILS -->
+
+  <section class="section">
+    <div class="reveal">
+      <p class="s-eyebrow">✦ detalles</p>
+      <h2 class="s-title">La velada</h2>
+    </div>
+    <div class="s-div reveal" style="transition-delay:.1s">
+      <div class="s-line"></div><span class="s-star">✦</span><div class="s-line r"></div>
+    </div>
+    <div class="reveal" style="transition-delay:.15s">
+      <div class="det-card">
+        <div class="det-num">01</div>
+        <div class="det-info">
+          <div class="det-lbl">Fecha</div>
+          <div class="det-val">Sábado 1 de Agosto, 2026</div>
+        </div>
+      </div>
+      <div class="det-card">
+        <div class="det-num">02</div>
+        <div class="det-info">
+          <div class="det-lbl">Horario</div>
+          <div class="det-val">21:00 hs</div>
+          <div class="det-sub">La noche es larga cuando hay que celebrar ✨</div>
+        </div>
+      </div>
+      <div class="det-card">
+        <div class="det-num">03</div>
+        <div class="det-info">
+          <div class="det-lbl">Lugar</div>
+          <div class="det-val">Salón Inaquelen</div>
+          <div class="det-sub">12 de Octubre 8450, Mar del Plata</div>
+        </div>
+      </div>
+      <div class="det-card">
+        <div class="det-num">04</div>
+        <div class="det-info">
+          <div class="det-lbl">Dress Code</div>
+          <div class="det-val">Elegante</div>
+          <div class="det-sub">Formal · Semi-formal · Tonos oscuros o plateados</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAP -->
+
+  <section class="section" style="padding-top:0">
+    <div class="reveal">
+      <p class="s-eyebrow">✦ ubicación</p>
+      <h2 class="s-title">Cómo llegar</h2>
+    </div>
+    <div class="s-div reveal" style="transition-delay:.1s">
+      <div class="s-line"></div><span class="s-star">✦</span><div class="s-line r"></div>
+    </div>
+    <div class="map-wrap reveal" style="transition-delay:.15s">
+      <div id="map"></div>
+      <div class="map-body">
+        <div class="map-name">Salón Inaquelen</div>
+        <div class="map-addr">12 de Octubre 8450<br>B7611FJD Mar del Plata, Provincia de Buenos Aires</div>
+        <button class="btn-gps" onclick="openGPS()">
+          <span>📍</span> ¿Cómo llegar?
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GIFT -->
+
+  <section class="section">
+    <div class="reveal">
+      <p class="s-eyebrow">✦ regalo sugerido</p>
+      <h2 class="s-title">Un detalle<br>desde el corazón</h2>
+    </div>
+    <div class="s-div reveal" style="transition-delay:.1s">
+      <div class="s-line"></div><span class="s-star">✦</span><div class="s-line r"></div>
+    </div>
+    <div class="gift-card reveal" style="transition-delay:.15s">
+      <div class="gift-icon-wrap">🎁</div>
+      <div class="gift-title">Regalo Sugerido</div>
+      <div class="gift-subtitle">Opcional · Con todo el amor</div>
+      <div class="gift-divider">
+        <div class="gift-divider-line"></div>
+        <span class="gift-divider-star">✦</span>
+        <div class="gift-divider-line"></div>
+      </div>
+      <p class="gift-desc">
+        Si querés compartir un regalo con Kiara<br>
+        pero no sabés qué elegir, no te preocupes.<br>
+        En la fiesta vas a encontrar un cofre especial<br>
+        donde podés depositar tu sobre con cariño.
+      </p>
+      <div class="gift-highlight">
+        <span style="font-size:20px;opacity:0.8;">💌</span>
+        <span>Un sobre es siempre una hermosa<br>manera de celebrarla</span>
+      </div>
+      <p class="gift-note">
+        Tu presencia ya es el regalo más importante.<br>
+        Esto es solo una opción por si lo deseás. ✦
+      </p>
+    </div>
+  </section>
+
+  <!-- CONFIRMATION -->
+
+  <div class="cf-title-block reveal">
+    <span class="cf-label">✦ confirmación de asistencia</span>
+    <h2 class="cf-main-title">Confirmación</h2>
+    <p class="cf-sub">Kiara espera recibirte en su gran noche.<br>Confirmá tu asistencia antes del 21 de Julio de 2026.</p>
+  </div>
+
+  <div class="cf-wrap reveal">
+    <div id="cf-form">
+      <div class="f-group">
+        <label class="f-label" for="f-name">Tu nombre</label>
+        <input class="f-input" id="f-name" type="text" placeholder="¿Cómo te llamás?" autocomplete="name">
+      </div>
+      <div class="f-group">
+        <div class="f-label" style="margin-bottom:10px;">Cantidad de asistentes</div>
+        <div class="ctr-group">
+          <div class="ctr-wrap">
+            <span class="ctr-lbl">Adultos</span>
+            <div class="ctr-row">
+              <button class="ctr-btn" onclick="cnt('a',-1)">−</button>
+              <span class="ctr-val" id="a-val">1</span>
+              <button class="ctr-btn" onclick="cnt('a',1)">+</button>
+            </div>
+          </div>
+          <div class="ctr-wrap">
+            <span class="ctr-lbl">Niños</span>
+            <div class="ctr-row">
+              <button class="ctr-btn" onclick="cnt('k',-1)">−</button>
+              <span class="ctr-val" id="k-val">0</span>
+              <button class="ctr-btn" onclick="cnt('k',1)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="f-group">
+        <label class="f-label" for="f-msg">Un mensaje para Kiara (opcional)</label>
+        <textarea class="f-input" id="f-msg" rows="3" placeholder="Un deseo, un abrazo... ✨" style="resize:none;"></textarea>
+      </div>
+      <button class="btn-confirm" onclick="sendWA()">
+        <span>✦</span> Confirmar asistencia <span>✦</span>
+      </button>
+    </div>
+    <div class="cf-ok" id="cf-ok">
+      <span class="cf-ok-icon">✨</span>
+      <div class="cf-ok-msg">¡Kiara te espera con los brazos abiertos!</div>
+      <div class="cf-ok-sub">Tu confirmación fue enviada por WhatsApp.<br>¡Nos vemos en la gran noche! ✦</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+
+  <footer class="footer">
+    <span class="ft-ornament">✦ ✦ ✦</span>
+    <p class="ft-quote">
+      Quince años son el umbral más hermoso —<br>
+      el último paso de la niña que fuiste<br>
+      y el primero de la mujer que ya sos.<br>
+      Kiara, que esta noche de destellos<br>
+      sea el espejo de todo lo que brillas por dentro.<br>
+      El mundo ya no puede esperar para verte llegar.
+    </p>
+    <div class="ft-name">Kiara</div>
+    <div class="ft-div"></div>
+    <p class="ft-brand">XV Años · 1 de Agosto · 2026</p>
+    <span class="ft-stars">✦ ✦ ✦</span>
+  </footer>
+  <!-- PROMO -->
+  <div class="promo-brand">
+    <span class="promo-brand-label">Invitación digital creada por</span>
+    <a class="promo-brand-link" href="https://www.instagram.com/Novainvite.co" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <circle cx="12" cy="12" r="4"/>
+        <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+      </svg>
+      @Novainvite.co
+    </a>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /page-wrap -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+/* ══ STATE ══ */
+var adults=1, kids=0;
+
+function cnt(t,d){
+  if(t==='a'){ adults=Math.max(1,adults+d); document.getElementById('a-val').textContent=adults; }
+  else        { kids=Math.max(0,kids+d);     document.getElementById('k-val').textContent=kids; }
+}
+
+/* ══ GLITTER ENGINE ══
+   Renders TWO layers:
+   1. Fine star dust (tiny dots, slow drift)
+   2. Bokeh discs (larger, blurred, bokeh effect like reference)
+   3. Occasional sparkle bursts
+*/
+function initGlitter(canvasId, density, bokehCount, size) {
+  var cv = document.getElementById(canvasId);
+  if(!cv) return;
+  var ctx = cv.getContext('2d');
+
+  function resize(){
+    cv.width  = window.innerWidth  > 430 ? 430 : window.innerWidth;
+    cv.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* ── Star dust ── */
+  var dust = [];
+  for(var i=0; i<density; i++) {
+    dust.push({
+      x: Math.random()*cv.width,
+      y: Math.random()*cv.height,
+      r: 0.3 + Math.random()*size,
+      a: 0.1 + Math.random()*0.7,
+      va: (Math.random()-.5)*0.015,
+      vx: (Math.random()-.5)*0.12,
+      vy: (Math.random()-.5)*0.08,
+      phase: Math.random()*Math.PI*2,
+      twinkleSpeed: 0.02+Math.random()*0.04
+    });
+  }
+
+  /* ── Bokeh discs ── */
+  var bokeh = [];
+  for(var j=0; j<bokehCount; j++) {
+    var sz = 6 + Math.random()*28;
+    bokeh.push({
+      x: Math.random()*cv.width,
+      y: Math.random()*cv.height,
+      r: sz,
+      a: 0.04 + Math.random()*0.14,
+      va: (Math.random()-.5)*0.006,
+      vx: (Math.random()-.5)*0.06,
+      vy: (Math.random()-.5)*0.04,
+      phase: Math.random()*Math.PI*2,
+      speed: 0.008+Math.random()*0.012
+    });
+  }
+
+  /* ── Sparkle bursts (star shape) ── */
+  var sparks = [];
+  function spawnSpark(){
+    sparks.push({
+      x: Math.random()*cv.width,
+      y: Math.random()*cv.height,
+      size: 2+Math.random()*4,
+      a: 1, da: 0.02+Math.random()*0.03,
+      rot: Math.random()*Math.PI*2,
+      drot: (Math.random()-.5)*0.08
+    });
+  }
+  setInterval(function(){ if(sparks.length<15) spawnSpark(); }, 300);
+
+  var frame = 0;
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    frame++;
+
+    /* star dust */
+    dust.forEach(function(p){
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0) p.x=cv.width; if(p.x>cv.width) p.x=0;
+      if(p.y<0) p.y=cv.height; if(p.y>cv.height) p.y=0;
+      var alpha = p.a * (0.4 + 0.6 * Math.sin(frame*p.twinkleSpeed + p.phase));
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    /* bokeh discs */
+    bokeh.forEach(function(b){
+      b.x += b.vx; b.y += b.vy;
+      if(b.x<-50) b.x=cv.width+50; if(b.x>cv.width+50) b.x=-50;
+      if(b.y<-50) b.y=cv.height+50; if(b.y>cv.height+50) b.y=-50;
+      var alpha = b.a * (0.5 + 0.5*Math.sin(frame*b.speed+b.phase));
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      var gr = ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+      gr.addColorStop(0, 'rgba(220,225,240,1)');
+      gr.addColorStop(0.4,'rgba(200,208,225,0.6)');
+      gr.addColorStop(1, 'rgba(200,208,225,0)');
+      ctx.fillStyle = gr;
+      ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    /* sparkle stars */
+    sparks = sparks.filter(function(s){
+      s.a -= s.da;
+      s.rot += s.drot;
+      if(s.a<=0) return false;
+      ctx.save();
+      ctx.globalAlpha = s.a * 0.8;
+      ctx.fillStyle = '#fff';
+      ctx.translate(s.x, s.y);
+      ctx.rotate(s.rot);
+      /* 4-point star */
+      ctx.beginPath();
+      var sp = s.size;
+      ctx.moveTo(0,-sp*2); ctx.lineTo(sp*0.4,-sp*0.4);
+      ctx.lineTo(sp*2,0); ctx.lineTo(sp*0.4,sp*0.4);
+      ctx.lineTo(0,sp*2); ctx.lineTo(-sp*0.4,sp*0.4);
+      ctx.lineTo(-sp*2,0); ctx.lineTo(-sp*0.4,-sp*0.4);
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+      return true;
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ══ OPEN ══ */
+function openInvitation(){
+  var intro = document.getElementById('intro');
+  intro.style.opacity = '0';
+  setTimeout(function(){
+    intro.style.display = 'none';
+    document.getElementById('main').classList.add('visible');
+    initGlitter('glitter-bg', 180, 22, 1.2);
+    initReveal();
+    initCountdown();
+    initMap();
+    startMusic();
+  }, 1200);
+}
+
+/* ══ MUSIC ══ */
+var musicMuted = false;
+function startMusic(){
+  var iframe = document.getElementById('yt-player');
+  iframe.src = 'https://www.youtube.com/embed/nSDgHBa_-kA?autoplay=1&loop=1&playlist=nSDgHBa_-kA&controls=0&mute=0';
+  var btn = document.getElementById('music-btn');
+  btn.style.display = 'flex';
+  btn.classList.add('active');
+}
+function toggleMusic(){
+  var iframe = document.getElementById('yt-player');
+  musicMuted = !musicMuted;
+  var btn = document.getElementById('music-btn');
+  if(musicMuted){
+    iframe.src = iframe.src.replace('mute=0','mute=1');
+    btn.textContent = '🔇';
+    btn.classList.remove('active');
+  } else {
+    iframe.src = iframe.src.replace('mute=1','mute=0');
+    btn.textContent = '🎵';
+    btn.classList.add('active');
+  }
+}
+
+/* Boot intro glitter immediately */
+initGlitter('intro-canvas', 220, 30, 1.4);
+
+/* ══ REVEAL ══ */
+function initReveal(){
+  var obs = new IntersectionObserver(function(en){
+    en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  },{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+}
+
+/* ══ COUNTDOWN ══ */
+function initCountdown(){
+  var target = new Date('2026-08-01T21:00:00');
+  function upd(){
+    var diff = target - new Date();
+    if(diff<=0){
+      document.getElementById('cd-grid').innerHTML='<p style="font-family:Cormorant Garamond,serif;font-size:20px;font-style:italic;color:#C8CDD8;padding:1rem;grid-column:1/-1;text-align:center;">✦ ¡Esta noche es LA noche de Kiara! ✦</p>';
+      return;
+    }
+    var d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),
+        m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+    document.getElementById('cd-d').textContent=String(d).padStart(2,'0');
+    document.getElementById('cd-h').textContent=String(h).padStart(2,'0');
+    document.getElementById('cd-m').textContent=String(m).padStart(2,'0');
+    document.getElementById('cd-s').textContent=String(s).padStart(2,'0');
+  }
+  upd(); setInterval(upd,1000);
+}
+
+/* ══ MAP ══ */
+function initMap(){
+  var lat=-38.008540, lng=-57.592307;
+  var map=L.map('map',{zoomControl:false,dragging:false,scrollWheelZoom:false}).setView([lat,lng],16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+  var icon=L.divIcon({html:'<div style="font-size:22px;filter:drop-shadow(0 0 8px #C8CDD8)">✦</div>',iconSize:[30,30],iconAnchor:[15,30],className:''});
+  L.marker([lat,lng],{icon:icon}).addTo(map).bindPopup('<b>Salón Inaquelen</b><br>XV Años · Kiara');
+}
+
+/* ══ GPS ══ */
+function openGPS(){
+  var lat=-38.008540,lng=-57.592307;
+  window.open(/iPad|iPhone|iPod/.test(navigator.userAgent)
+    ?'maps://maps.apple.com/?daddr='+lat+','+lng
+    :'https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng,'_blank');
+}
+
+/* ══ LIGHTBOX ══ */
+function openLB(src,cap){
+  document.getElementById('lb-img').src=src;
+  document.getElementById('lb-cap').textContent=cap;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLB(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ══ CONFIRM ══ */
+function sendWA(){
+  var name=document.getElementById('f-name').value.trim();
+  if(!name){ document.getElementById('f-name').focus(); return; }
+  var msg=document.getElementById('f-msg').value.trim();
+  var text='✨ *Confirmación · XV Años de Kiara*\n\n'
+          +'👤 Nombre: '+name+'\n'
+          +'👨‍👩‍👧 Adultos: '+adults+'\n'
+          +'👶 Niños: '+kids+'\n'
+          +(msg?'\n💬 Mensaje: '+msg+'\n':'')
+          +'\n✦ ¡Confirmamos asistencia a la gran noche de Kiara! ✨';
+  window.open('https://api.whatsapp.com/send?phone=5492236196431&text='+encodeURIComponent(text),'_blank');
+  document.getElementById('cf-form').style.display='none';
+  document.getElementById('cf-ok').classList.add('show');
+}
+</script>
+
+</body>
+</html>
